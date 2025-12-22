@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222 84% 5%;
+
+  --primary: 222 84% 56%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 15% 35%;
+
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 222 84% 56%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 84% 5%;
+}
+
+.dark {
+  --background: 222 84% 5%;
+  --foreground: 210 40% 98%;
+
+  --primary: 222 84% 56%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 217 33% 17%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 222 84% 56%;
+
+  --card: 222 84% 5%;
+  --card-foreground: 210 40% 98%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+}
+
+/* 拖拽区域样式 */
+.drop-zone {
+  @apply border-2 border-dashed border-border rounded-lg transition-all duration-200;
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+  @apply border-primary bg-primary/5;
+}
+
+/* 图片比较滑块 */
+.image-compare-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-compare-slider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: hsl(var(--primary));
+  cursor: ew-resize;
+  z-index: 10;
+  transform: translateX(-50%);
+}
+
+.image-compare-slider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}

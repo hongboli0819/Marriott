@@ -1,0 +1,48 @@
+# A string used to distinguish different Supabase projects on the same host.
+project_id = "marriott-chat"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3002"
+
+# Edge Functions 配置
+# gemini-image 函数超时设置 - Pro 版本支持最长 150 秒
+[functions.gemini-image]
+verify_jwt = false
+
+# 异步任务处理函数 - 需要足够长的超时时间来串行生成3张图片
+[functions.process-task]
+verify_jwt = false
+
+[functions.submit-task]
+verify_jwt = false
+
+[functions.check-task]
+verify_jwt = false
+
+# OCR 任务处理函数 - 需要禁用 JWT 验证以支持客户端直接重触发
+[functions.process-ocr-task]
+verify_jwt = false

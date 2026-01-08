@@ -666,6 +666,24 @@ export const ChatPage: React.FC = () => {
       isSendingRef.current = false;
     }
 
+    // 🔧 切换会话时清理所有 Step 相关的 ref（避免新会话使用旧数据）
+    console.log("[ChatPage] 切换会话，清理 Step 相关状态");
+    step1SelectedImageRef.current = null;
+    step1SelectedImageUrlRef.current = null;
+    step1SelectedIndexRef.current = null;
+    step1ImagesRef.current = [];
+    step2SelectedImageRef.current = null;
+    step2ImagesRef.current = [];
+    confirmedTextRef.current = "";
+    step1MessageIdRef.current = null;
+    step2MessageIdRef.current = null;
+    
+    // 清理编辑相关状态
+    setCachedEditedImageUrl(null);
+    setCachedCanvasState(null);
+    setTextEditLines([]);
+    setTextEditBackgroundImage("");
+
     // 保存旧会话的消息
     if (prevSessionIdRef.current && messages.length > 0) {
       const oldSessionId = prevSessionIdRef.current;

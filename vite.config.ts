@@ -16,10 +16,9 @@ export default defineConfig({
         __dirname,
         "./packages/gemini-image-generator/src/core/index.ts"
       ),
-      // 使用副本版本（包含新的 X 距离检查算法）
       "@internal/image-diff-tool": path.resolve(
         __dirname,
-        "./packages/image-diff-tool_副本/src/core/index.ts"
+        "./packages/image-diff-tool/src/core/index.ts"
       ),
       "@internal/image-compressor": path.resolve(
         __dirname,
@@ -27,11 +26,7 @@ export default defineConfig({
       ),
       "@internal/text-editor-module": path.resolve(
         __dirname,
-        "./packages/image-diff-tool_副本/packages/text-editor-module/src/core/index.ts"
-      ),
-      "@internal/template-extractor": path.resolve(
-        __dirname,
-        "./packages/template-extractor/src/core/index.ts"
+        "./packages/image-diff-tool/packages/text-editor-module/src/core/index.ts"
       ),
       // 强制统一 React 版本（避免多实例问题）
       "react": path.resolve(__dirname, "./node_modules/react"),

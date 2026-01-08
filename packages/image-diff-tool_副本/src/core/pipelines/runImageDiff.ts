@@ -149,67 +149,90 @@ export const runImageDiff: CoreFn<RunImageDiffInput, RunImageDiffOutput> = async
     );
     visualizedImage = visualizeResult.visualizedImage;
 
-    // Step 7: 文字识别（Dify 或 OCR）
-    if (useDifyOCR) {
-      // 使用 Dify 进行文字识别
-      logger?.info?.("[ImageDiff] Step 7: 使用 Dify 识别文字");
-      try {
-        const difyResult = await recognizeTextWithDify(
-          {
-            lines,
-            wording: wording!,
-          },
-          ctx
-        );
+    // Step 7: 文字识别
+    // 始终先执行 Tesseract OCR 获取 confidence
+    logger?.info?.("[ImageDiff] Step 7a: Tesseract OCR 预识别（获取置信度）");
+    
+    // 构建 LineGroup 结构（recognizeText 需要的格式）
+    const lineGroups = lines.map((line) => ({
+      lineIndex: line.lineIndex,
+      regions: line.regionIds
+        .map((id) => clusterResult.regions.find((r) => r.id === id))
+        .filter(Boolean) as typeof clusterResult.regions,
+      boundingBox: line.boundingBox,
+    }));
 
-        // 将识别结果填充到 lines
-        for (const result of difyResult.results) {
-          const line = lines.find((l) => l.lineIndex === result.lineIndex);
-          if (line) {
-            line.recognizedText = result.recognizedText?.replace(/\s+/g, "") || "";
-          }
+    try {
+      const ocrResult = await recognizeText(
+        {
+          imageDataUrl: imageB,
+          lines: lineGroups,
+          language: finalConfig.ocrLanguage,
+          padding: 10,
+        },
+        ctx
+      );
+
+      // 将 Tesseract OCR 结果填充到 lines（包含 confidence）
+      for (const ocrLine of ocrResult.lines) {
+        const line = lines.find((l) => l.lineIndex === ocrLine.lineIndex);
+        if (line) {
+          line.recognizedText = ocrLine.recognizedText?.replace(/\s+/g, "") || "";
+          line.confidence = ocrLine.confidence;
         }
-
-        logger?.info?.(`[ImageDiff] Dify 识别完成: ${difyResult.successCount} 成功, ${difyResult.failCount} 失败`);
-      } catch (difyError) {
-        logger?.error?.("[ImageDiff] Dify 识别失败:", difyError);
       }
-    } else {
-      // 使用 OCR 进行文字识别
-      logger?.info?.("[ImageDiff] Step 7: 自动 OCR 识别");
-      try {
-        // 构建 LineGroup 结构（recognizeText 需要的格式）
-        const lineGroups = lines.map((line) => ({
-          lineIndex: line.lineIndex,
-          regions: line.regionIds
-            .map((id) => clusterResult.regions.find((r) => r.id === id))
-            .filter(Boolean) as typeof clusterResult.regions,
-          boundingBox: line.boundingBox,
-        }));
 
-        const ocrResult = await recognizeText(
-          {
-            imageDataUrl: imageB,
-            lines: lineGroups,
-            language: finalConfig.ocrLanguage,
-            padding: 10,
-          },
-          ctx
-        );
+      logger?.info?.("[ImageDiff] Tesseract OCR 完成");
+      
+      // 统计置信度分布
+      const highConfLines = lines.filter((l) => (l.confidence || 0) >= 80);
+      const lowConfLines = lines.filter((l) => (l.confidence || 0) < 80);
+      logger?.info?.(`[ImageDiff] 置信度统计: >= 80%: ${highConfLines.length} 行, < 80%: ${lowConfLines.length} 行`);
+    } catch (ocrError) {
+      logger?.error?.("[ImageDiff] Tesseract OCR 失败:", ocrError);
+    }
 
-        // 将识别结果填充到 lines（去除空格）
-        for (const ocrLine of ocrResult.lines) {
-          const line = lines.find((l) => l.lineIndex === ocrLine.lineIndex);
-          if (line) {
-            // 去除所有空格（包括全角空格）
-            line.recognizedText = ocrLine.recognizedText?.replace(/\s+/g, "") || "";
-            line.confidence = ocrLine.confidence;
+    // Step 7b: 如果有 wording，使用 Dify 识别高置信度的行
+    if (useDifyOCR) {
+      logger?.info?.("[ImageDiff] Step 7b: 使用 Dify 识别高置信度行");
+      
+      // 过滤出置信度 >= 80% 的行
+      const CONFIDENCE_THRESHOLD = 80;
+      const highConfidenceLines = lines.filter((l) => (l.confidence || 0) >= CONFIDENCE_THRESHOLD);
+      const lowConfidenceLines = lines.filter((l) => (l.confidence || 0) < CONFIDENCE_THRESHOLD);
+      
+      // 低置信度的行直接设为空（杂乱/噪音区域）
+      for (const line of lowConfidenceLines) {
+        line.recognizedText = "";
+        logger?.info?.(`[ImageDiff] 行 ${line.lineIndex} 置信度 ${line.confidence?.toFixed(1)}% < ${CONFIDENCE_THRESHOLD}%，跳过 Dify`);
+      }
+      
+      if (highConfidenceLines.length > 0) {
+        logger?.info?.(`[ImageDiff] 提交 ${highConfidenceLines.length} 行到 Dify（置信度 >= ${CONFIDENCE_THRESHOLD}%）`);
+        
+        try {
+          const difyResult = await recognizeTextWithDify(
+            {
+              lines: highConfidenceLines,
+              wording: wording!,
+            },
+            ctx
+          );
+
+          // 将 Dify 识别结果填充到 lines（覆盖 Tesseract 结果）
+          for (const result of difyResult.results) {
+            const line = lines.find((l) => l.lineIndex === result.lineIndex);
+            if (line) {
+              line.recognizedText = result.recognizedText?.replace(/\s+/g, "") || "";
+            }
           }
-        }
 
-        logger?.info?.("[ImageDiff] OCR 识别完成");
-      } catch (ocrError) {
-        logger?.error?.("[ImageDiff] OCR 识别失败:", ocrError);
+          logger?.info?.(`[ImageDiff] Dify 识别完成: ${difyResult.successCount} 成功, ${difyResult.failCount} 失败`);
+        } catch (difyError) {
+          logger?.error?.("[ImageDiff] Dify 识别失败，保留 Tesseract 结果:", difyError);
+        }
+      } else {
+        logger?.info?.("[ImageDiff] 没有高置信度行，跳过 Dify");
       }
     }
   } else {

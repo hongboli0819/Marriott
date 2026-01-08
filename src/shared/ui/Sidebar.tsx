@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   PlusIcon,
   ChatBubbleIcon,
@@ -27,6 +28,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectSession,
   onDeleteSession,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isTemplateLibrary = location.pathname === "/template-library";
+
   return (
     <div
       className={`
@@ -79,12 +84,57 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
+      {/* Navigation Tabs */}
+      <div className="px-3 mb-3 relative z-10">
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              navigate("/");
+              onNewChat();
+            }}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              !isTemplateLibrary
+                ? "bg-card/40 text-foreground"
+                : "text-muted-foreground hover:bg-card/20 hover:text-foreground"
+            }`}
+          >
+            <ChatBubbleIcon className="w-4 h-4" />
+            <span>对话</span>
+          </button>
+          <button
+            onClick={() => navigate("/template-library")}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              isTemplateLibrary
+                ? "bg-card/40 text-foreground"
+                : "text-muted-foreground hover:bg-card/20 hover:text-foreground"
+            }`}
+          >
+            <span>📐</span>
+            <span>模版库</span>
+          </button>
+        </div>
+      </div>
+
       {/* Divider */}
       <div className="mx-4 border-t border-card/30 relative z-10"></div>
 
-      {/* Chat History */}
+      {/* Chat History - 仅在对话页显示 */}
       <div className="flex-1 overflow-y-auto px-3 pt-3 custom-scrollbar relative z-10">
-        {chatSessions.length > 0 ? (
+        {isTemplateLibrary ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <span className="text-4xl mb-3">📐</span>
+            <p className="text-sm text-foreground font-medium">模版库</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              上传图片提取可编辑模版
+            </p>
+            <div className="mt-4 text-left text-xs text-muted-foreground space-y-1 px-4">
+              <p>• 自动匹配宽高比</p>
+              <p>• Gemini 4K 高清复制</p>
+              <p>• 智能剔除文字</p>
+              <p>• 差异分析识别</p>
+            </div>
+          </div>
+        ) : chatSessions.length > 0 ? (
           <>
             <div className="text-[10px] font-semibold text-muted-foreground px-4 py-2 uppercase tracking-[0.15em]">
               对话历史

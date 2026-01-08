@@ -71,14 +71,18 @@ serve(async (req) => {
     const triggerId = crypto.randomUUID();
 
     // 创建任务记录
+    // 注意：不使用 conversation_id 字段（有外键约束），将其存储在 input_data 中
     const { data: task, error: insertError } = await supabase
       .from("async_tasks")
       .insert({
         task_type: taskType,
         status: "pending",
         trigger_id: triggerId,
-        conversation_id: conversationId,
-        input_data: inputData,
+        // conversation_id 有外键约束，改为存储在 input_data 中
+        input_data: {
+          ...inputData,
+          frontendConversationId: conversationId,
+        },
       })
       .select()
       .single();

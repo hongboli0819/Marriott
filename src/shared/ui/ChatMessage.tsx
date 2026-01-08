@@ -236,7 +236,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             ${isEditing ? "w-full min-w-[300px]" : ""}
             ${
               isUser
-                ? "bg-white/90 backdrop-blur-xl text-gray-900 rounded-tr-sm shadow-lg border border-gray-200"
+                ? "bg-white backdrop-blur-xl text-gray-800 rounded-tr-sm shadow-lg border border-gray-200"
                 : "glass-strong text-foreground rounded-tl-sm shadow-lg shadow-primary/10"
             }
             ${isEditing ? "border-2 border-marriott-500/50" : ""}
@@ -252,7 +252,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
             <div className="relative font-medium tracking-wide">
               {isUser ? (
-                <span className="whitespace-pre-wrap">{message.content}</span>
+                <span className="whitespace-pre-wrap text-gray-800">{message.content}</span>
               ) : isDesignModeSelection ? (
                 // 设计模式选择消息
                 <div>

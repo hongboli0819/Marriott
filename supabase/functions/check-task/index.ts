@@ -12,10 +12,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+// 硬编码 Supabase 配置（使用 anon key，因为 RLS 允许 public read）
+const SUPABASE_URL = "https://qqlwechtvktkhuheoeja.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxbHdlY2h0dmt0a2h1aGVvZWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNTk2OTgsImV4cCI6MjA3OTczNTY5OH0.yGSijURBrllzdHYSqnqA792GAapWW9tK3y_ukUfj4XQ";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

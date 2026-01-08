@@ -539,6 +539,9 @@ export const ChatPage: React.FC = () => {
             // 保存分析结果到状态
             setTextEditBackgroundImage(backgroundImage);
             setTextEditLines(lines);
+            // 🔧 清除旧的 canvas 缓存，强制使用新的 OCR 识别结果
+            setCachedCanvasState(null);
+            setCachedEditedImageUrl(null);
             
             // 替换分析消息为编辑入口消息
             setMessages((prev) =>

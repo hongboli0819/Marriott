@@ -9,11 +9,21 @@ import {
   runImageDiff,
   linesToCanvasTextObjects,
   setConversationId,
+  IMAGE_DIFF_VERSION,
   type RunImageDiffInput,
   type RunImageDiffOutput,
   type LineGroupInfo,
   type CanvasTextObject,
 } from "@internal/image-diff-tool";
+
+// === 临时验证代码 ===
+console.log("✅ [integrateImageDiff] 验证 image-diff-tool 版本:", IMAGE_DIFF_VERSION);
+if (IMAGE_DIFF_VERSION?.includes("副本")) {
+  console.log("✅ [integrateImageDiff] 确认已接入副本版本！");
+} else {
+  console.warn("⚠️ [integrateImageDiff] 警告：未接入副本版本！");
+}
+// === 临时验证代码结束 ===
 
 // 重新导出类型和配置函数供外部使用
 export type { RunImageDiffOutput, LineGroupInfo, CanvasTextObject };

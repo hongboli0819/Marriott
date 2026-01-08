@@ -19,8 +19,9 @@ import {
 } from "../_shared/supabase-client.ts";
 
 // ===== 环境变量 =====
-const DIFY_API_BASE = Deno.env.get("DIFY_API_BASE") || "https://dify-prod.tezign.com/v1";
-const DIFY_API_KEY = Deno.env.get("DIFY_API_KEY") || "app-Yk22GvTsSujKQ1JCgNJoOG0U";
+// 🔧 强制使用正确的 API Key（绕过可能错误配置的环境变量）
+const DIFY_API_BASE = "https://dify-prod.tezign.com/v1";
+const DIFY_API_KEY = "app-Yk22GvTsSujKQ1JCgNJoOG0U";
 
 // ===== 固定用户 ID =====
 const FIXED_USER_ID = "marriott-user";

@@ -15,8 +15,9 @@ import { decode as base64Decode } from "https://deno.land/std@0.208.0/encoding/b
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-const DIFY_API_BASE = Deno.env.get("DIFY_API_BASE") || "https://dify-prod.tezign.com/v1";
-const DIFY_API_KEY = Deno.env.get("DIFY_API_KEY") || "app-Yk22GvTsSujKQ1JCgNJoOG0U";
+// 🔧 强制使用正确的 API Key（绕过可能错误配置的环境变量）
+const DIFY_API_BASE = "https://dify-prod.tezign.com/v1";
+const DIFY_API_KEY = "app-Yk22GvTsSujKQ1JCgNJoOG0U";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 

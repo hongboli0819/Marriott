@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const GEMINI_API_KEY = "AIzaSyAdp1djbgFDcYVm7XUsybOmGsEKhrrJe2Y";
+const GEMINI_API_KEY = "AIzaSyBr-RyZJ6fRB5KBPmZOnvddYX5gDQnP2Yc";
 
 // 使用 gemini-3-pro-image-preview 模型（高级图片生成模型）
 const GEMINI_MODEL = "gemini-3-pro-image-preview";
@@ -173,3 +173,4 @@ serve(async (req) => {
     );
   }
 });
+

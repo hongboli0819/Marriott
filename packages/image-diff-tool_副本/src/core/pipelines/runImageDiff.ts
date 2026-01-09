@@ -185,9 +185,9 @@ export const runImageDiff: CoreFn<RunImageDiffInput, RunImageDiffOutput> = async
       logger?.info?.("[ImageDiff] Tesseract OCR 完成");
       
       // 统计置信度分布
-      const highConfLines = lines.filter((l) => (l.confidence || 0) >= 80);
-      const lowConfLines = lines.filter((l) => (l.confidence || 0) < 80);
-      logger?.info?.(`[ImageDiff] 置信度统计: >= 80%: ${highConfLines.length} 行, < 80%: ${lowConfLines.length} 行`);
+      const highConfLines = lines.filter((l) => (l.confidence || 0) >= 60);
+      const lowConfLines = lines.filter((l) => (l.confidence || 0) < 60);
+      logger?.info?.(`[ImageDiff] 置信度统计: >= 60%: ${highConfLines.length} 行, < 60%: ${lowConfLines.length} 行`);
     } catch (ocrError) {
       logger?.error?.("[ImageDiff] Tesseract OCR 失败:", ocrError);
     }
@@ -196,8 +196,8 @@ export const runImageDiff: CoreFn<RunImageDiffInput, RunImageDiffOutput> = async
     if (useDifyOCR) {
       logger?.info?.("[ImageDiff] Step 7b: 使用 Dify 识别高置信度行");
       
-      // 过滤出置信度 >= 80% 的行
-      const CONFIDENCE_THRESHOLD = 80;
+      // 过滤出置信度 >= 60% 的行
+      const CONFIDENCE_THRESHOLD = 60;
       const highConfidenceLines = lines.filter((l) => (l.confidence || 0) >= CONFIDENCE_THRESHOLD);
       const lowConfidenceLines = lines.filter((l) => (l.confidence || 0) < CONFIDENCE_THRESHOLD);
       

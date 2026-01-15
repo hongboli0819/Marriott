@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AppShell } from "@/app/AppShell";
 import { ChatPage } from "@/app/pages/ChatPage";
+import { TemplateLibraryPage } from "@/app/pages/TemplateLibraryPage";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AppShell />}>
           <Route index element={<ChatPage />} />
+          <Route path="template-library" element={<TemplateLibraryPage />} />
         </Route>
       </Routes>
     </div>

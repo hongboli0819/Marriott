@@ -29,6 +29,16 @@ export default defineConfig({
         __dirname,
         "./packages/image-diff-tool_副本/packages/text-editor-module/src/core/index.ts"
       ),
+      // 模版提取器 - Shared (UI 组件、Hooks) ⚠️ 必须在 Core 之前定义
+      "@internal/template-extractor/shared": path.resolve(
+        __dirname,
+        "./packages/template-extractor/src/shared/index.ts"
+      ),
+      // 模版提取器 - Core (纯函数)
+      "@internal/template-extractor": path.resolve(
+        __dirname,
+        "./packages/template-extractor/src/core/index.ts"
+      ),
       // 强制统一 React 版本（避免多实例问题）
       "react": path.resolve(__dirname, "./node_modules/react"),
       "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
